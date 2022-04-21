@@ -1,8 +1,25 @@
 package edu.stanford.bmir.protege.web.server.api.resources;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
+import javax.annotation.Nonnull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import com.google.common.collect.ImmutableList;
+
 import edu.stanford.bmir.protege.web.server.api.ActionExecutor;
 import edu.stanford.bmir.protege.web.shared.crud.GetEntityCrudKitSettingsAction;
 import edu.stanford.bmir.protege.web.shared.crud.IRIPrefixUpdateStrategy;
@@ -23,15 +40,6 @@ import edu.stanford.bmir.protege.web.shared.tag.SetProjectTagsAction;
 import edu.stanford.bmir.protege.web.shared.tag.TagData;
 import edu.stanford.bmir.protege.web.shared.user.UserId;
 
-import javax.annotation.Nonnull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
 /**
  * Matthew Horridge
  * Stanford Center for Biomedical Informatics Research
@@ -51,10 +59,14 @@ public class ProjectSettingsResource {
         this.actionExecutor = checkNotNull(actionExecutor);
     }
 
+    protected final Logger logger = LoggerFactory.getLogger(ProjectSettingsResource.class);
+
     @Path("/")
     @GET
     @Produces(APPLICATION_JSON)
     public Response getProjectSettings(@Context UserId userId) {
+	logger.info("Called getProjectSettings for {}", userId);
+
         var projectSettingsResult = actionExecutor.execute(new GetProjectSettingsAction(projectId), userId);
         var entityCreationSettingsResult = actionExecutor.execute(new GetEntityCrudKitSettingsAction(projectId),
                                                                   userId);
@@ -78,6 +90,8 @@ public class ProjectSettingsResource {
     @POST
     @Consumes(APPLICATION_JSON)
     public Response setProjectSettings(@Context UserId userId, AllProjectSettings allProjectSettings) {
+	logger.info("Called setProjectSettings for {}: settings: {}", userId, allProjectSettings);
+
         var projectSettings = allProjectSettings.getProjectSettings().withProjectId(projectId);
         actionExecutor.execute(new SetProjectSettingsAction(projectSettings), userId);
 
@@ -101,7 +115,8 @@ public class ProjectSettingsResource {
                                                                  tag.getCriteria(),
                                                                  0))
                                          .collect(toImmutableList());
-        actionExecutor.execute(new SetProjectTagsAction(projectId, projectTagsData), userId);
+        if (projectTagsData != null && projectTagsData.size() > 0)
+            actionExecutor.execute(new SetProjectTagsAction(projectId, projectTagsData), userId);
         var sharingSettings = allProjectSettings.getSharingSettings();
         actionExecutor.execute(new SetProjectSharingSettingsAction(sharingSettings), userId);
         var searchSettings = allProjectSettings.getSearchSettings();

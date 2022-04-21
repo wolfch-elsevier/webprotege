@@ -1,12 +1,7 @@
 package edu.stanford.bmir.protege.web.server.api.resources;
 
-import com.google.auto.factory.AutoFactory;
-import com.google.auto.factory.Provided;
-import edu.stanford.bmir.protege.web.server.api.ActionExecutor;
-import edu.stanford.bmir.protege.web.shared.project.GetProjectDetailsAction;
-import edu.stanford.bmir.protege.web.shared.project.ProjectDetails;
-import edu.stanford.bmir.protege.web.shared.project.ProjectId;
-import edu.stanford.bmir.protege.web.shared.user.UserId;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -17,8 +12,17 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.auto.factory.AutoFactory;
+import com.google.auto.factory.Provided;
+
+import edu.stanford.bmir.protege.web.server.api.ActionExecutor;
+import edu.stanford.bmir.protege.web.shared.project.GetProjectDetailsAction;
+import edu.stanford.bmir.protege.web.shared.project.ProjectDetails;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
+import edu.stanford.bmir.protege.web.shared.user.UserId;
 
 /**
  * Matthew Horridge
@@ -47,6 +51,8 @@ public class ProjectResource {
 
     @Nonnull
     private final ProjectSettingsResourceFactory projectSettingsResourceFactory;
+    
+    protected final static Logger logger = LoggerFactory.getLogger(ProjectResource.class);
 
     @SuppressWarnings("UnnecessaryFullyQualifiedName")
     @AutoFactory
@@ -71,6 +77,7 @@ public class ProjectResource {
     @Produces(APPLICATION_JSON)
     @Path("/")
     public Response getProjectDetails(@Context UserId userId, @Context UriInfo uriInfo) {
+	logger.info("called getProjectDetails: user: {}, UriInfo: {}", userId, uriInfo);
         ProjectDetails projectDetails = executor.execute(new GetProjectDetailsAction(projectId), userId)
                                                 .getProjectDetails();
         return Response.ok(projectDetails).build();

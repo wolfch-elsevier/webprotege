@@ -45,9 +45,9 @@ public class GenerateApiKeyCmd extends Cmd {
         Datastore datastore = morphia.createDatastore(mongoClient, "webprotege");
         ApiKeyManager keyManager = new ApiKeyManager(new ApiKeyHasher(), new UserApiKeyStoreImpl(datastore));
 
-        console.printf("Please enter the user name that they key will be generated from\n");
+        console.printf("Please enter the user name that the key will be generated for:\n");
         String userName = console.readLine();
-        console.printf("Please enter a purpose for the API key\n");
+        console.printf("Please enter a purpose for the API key:\n");
         String purpose = console.readLine();
 
         console.printf("Generating api key...");

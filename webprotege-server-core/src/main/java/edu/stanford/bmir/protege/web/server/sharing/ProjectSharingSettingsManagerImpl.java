@@ -93,7 +93,7 @@ public class ProjectSharingSettingsManagerImpl implements ProjectSharingSettings
                                                roles);
             }
             else {
-                logger.info("User in sharing setting not found.  An email invitation needs to be sent");
+                logger.info("User: \"{}\" in sharing setting not found.  An email invitation needs to be sent", personId.getId());
                 // TODO
                 // We need to send the user an email invitation
             }
