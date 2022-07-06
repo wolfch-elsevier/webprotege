@@ -7,13 +7,44 @@ target/
 .classpath
 .project
 .settings/
+**/.factorypath
 out/
+
+# https://www.jenv.be/
+.java-version
 
 logs/
 
 velocity.log.*
 *.log
 
+**/*.bak
+
 dependency-reduced-pom.xml
 
 .protegedata/
+
+# Package Files 
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+replay_pid*
+
+# Webprotege specific
+api_key*
+HGRAPH_CRED*
+**/deps.txt
+*.n3
+*.ttl
+*.sparql
+uuid.txt
+queries/
+termlists/
+

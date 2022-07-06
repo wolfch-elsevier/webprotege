@@ -20,8 +20,13 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import static java.lang.System.out;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.StackWalker.StackFrame;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -76,6 +81,21 @@ public class LuceneIndexWriterImpl implements LuceneIndexWriter, HasDispose, Ent
         this.indexWriter = indexWriter;
         this.searcherManager = searcherManager;
         this.builtInOwlEntitiesIndex = checkNotNull(builtInOwlEntitiesIndex);
+
+        logger.info("=========== LuceneIndexWriterImpl ===========");
+        List<StackFrame> stack = StackWalker.getInstance().walk(s ->
+        s.limit(25).collect(Collectors.toList()));
+        logger.info("Directory: {}", luceneDirectory.getClass().getName());
+        logger.info("LuceneEntityDocumentTranslator: {}", luceneEntityDocumentTranslator.getClass().getName());
+        logger.info("ProjectSignatureIndex: {}", projectSignatureIndex.getClass().getName());
+        logger.info("EntitiesInProjectSignatureIndex: {}", entitiesInProjectSignatureIndex.getClass().getName());
+        logger.info("IndexWriter: {}", indexWriter.getClass().getName());
+        logger.info("SearcherManager: {}", searcherManager.getClass().getName());
+        logger.info("BuiltInOwlEntitiesIndex: {}", builtInOwlEntitiesIndex.getClass().getName());
+
+	stack.forEach(s -> {
+	    logger.info(s.toString());
+	});
     }
 
     @Override
