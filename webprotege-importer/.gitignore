@@ -1,0 +1,11 @@
+# Webprotege specific
+api_key*
+HGRAPH_CRED*
+**/deps.txt
+*.n3
+*.ttl
+*.sparql
+uuid.txt
+queries/
+termlists/
+data/
